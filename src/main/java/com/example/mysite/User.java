@@ -13,7 +13,6 @@ public class User {
 
     private String username;
     private String email;
-    private Integer age;
 
     // getters and setters
     public Long getId() {
@@ -38,13 +37,5 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public Integer getAge() {
-        return age;
-    }
-
-    public void setAge(Integer age) {
-        this.age = age;
     }
 }

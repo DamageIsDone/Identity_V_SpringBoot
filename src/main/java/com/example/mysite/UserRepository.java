@@ -7,11 +7,10 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface UserRepository extends JpaRepository<User, Long> {
-    // 例如，根据用户名查询用户
+    // 根据用户名查询用户
     User findByUsername(String username);
 
-    // 也可以根据需要定义更复杂的查询方法
-    // 例如，根据用户名和邮箱查询用户
+    // 根据用户名和邮箱查询用户
     User findByUsernameAndEmail(String username, String email);
 
     // 如果需要使用原生SQL查询，可以使用 @Query 注解
