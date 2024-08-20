@@ -8,7 +8,7 @@ import java.sql.Timestamp;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer userId;
+    private Integer user_id;
 
     @Column(nullable = false, unique = true, length = 50)
     private String username;
@@ -16,20 +16,42 @@ public class User {
     @Column(name = "password", nullable = false, length = 255)
     private String password;
 
-    @Column(nullable = true, unique = true, length = 100)
+    @Column(nullable = false, unique = true, length = 100)
     private String phone;
 
+    @Column(name = "security_question", nullable = false, length = 255)
+    private String security_question;
+
+    @Column(name= "security_answer", nullable = false, length = 255)
+    private String security_answer;
+
     @Column(name = "created_at", nullable = false, updatable = false)
-    private Timestamp createdAt;
+    private Timestamp created_at;
 
     // Getters and Setters
 
-    public Timestamp getCreatedAt() {
-        return createdAt;
+    public Timestamp getCreated_at() {
+        return created_at;
     }
 
-    public void setCreatedAt(Timestamp createdAt) {
-        this.createdAt = createdAt;
+    public void setCreated_at(Timestamp created_at) {
+        this.created_at = created_at;
+    }
+
+    public String getSecurity_answer() {
+        return security_answer;
+    }
+
+    public void setSecurity_answer(String security_answer) {
+        this.security_answer = security_answer;
+    }
+
+    public String getSecurity_question() {
+        return security_question;
+    }
+
+    public void setSecurity_question(String security_question) {
+        this.security_question = security_question;
     }
 
     public String getPhone() {
@@ -56,11 +78,11 @@ public class User {
         this.username = username;
     }
 
-    public Integer getUserId() {
-        return userId;
+    public Integer getUser_id() {
+        return user_id;
     }
 
-    public void setUserId(Integer userId) {
-        this.userId = userId;
+    public void setUser_id(Integer user_id) {
+        this.user_id = user_id;
     }
 }

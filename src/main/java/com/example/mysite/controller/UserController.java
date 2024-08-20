@@ -1,8 +1,9 @@
 package com.example.mysite.controller;
 
 import com.example.mysite.classes.User;
-import com.example.mysite.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -11,20 +12,25 @@ import java.util.List;
 @RequestMapping("/users")
 public class UserController {
     @Autowired
-    private UserService userService;
+    private JdbcTemplate jdbcTemplate;
 
     @GetMapping("/{username}")
     public User getUserByUsername(@PathVariable String username) {
-        return userService.findByUsername(username);
+        String sql = "SELECT * FROM users WHERE username = ?";
+        return jdbcTemplate.queryForObject(sql, new Object[]{username},
+                new BeanPropertyRowMapper<>(User.class));
     }
 
     @PostMapping
     public User createUser(@RequestBody User user) {
-        return userService.saveUser(user);
+        String sql = "INSERT INTO users (username, password, phone, security_question, security_answer) VALUES (?, ?, ?, ?, ?)";
+        jdbcTemplate.update(sql, user.getUsername(), user.getPassword(), user.getPhone(), user.getSecurity_question(), user.getSecurity_answer());
+        return user; // Return the created user object
     }
 
     @GetMapping
     public List<User> getAllUsers() {
-        return userService.findAllUsers();
+        String sql = "SELECT * FROM users";
+        return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(User.class));
     }
 }
