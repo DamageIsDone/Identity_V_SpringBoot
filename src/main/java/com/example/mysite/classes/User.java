@@ -28,7 +28,18 @@ public class User {
     @Column(name = "created_at", nullable = false, updatable = false)
     private Timestamp created_at;
 
+    @Column(name = "isManager", nullable = false)
+    private boolean isManager;
+
     // Getters and Setters
+
+    public boolean getIsManager() {
+        return isManager;
+    }
+
+    public void setIsManager(boolean isManager) {
+        this.isManager = isManager;
+    }
 
     public Timestamp getCreated_at() {
         return created_at;
