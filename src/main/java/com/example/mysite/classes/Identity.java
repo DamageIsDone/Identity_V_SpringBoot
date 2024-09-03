@@ -2,8 +2,6 @@ package com.example.mysite.classes;
 
 import jakarta.persistence.*;
 
-import java.time.LocalDate;
-
 @Entity
 public class Identity {
 
@@ -15,9 +13,19 @@ public class Identity {
     private String name;
     private String camp;
     private String gender;
-    private LocalDate birthday;
+    private String birthday;
+
+    private String picture;
 
     // Getters and setters
+
+    public String getPicture() {
+        return picture;
+    }
+
+    public void setPicture(String picture) {
+        this.picture = picture;
+    }
 
     public Integer getIdentity_id() {
         return identity_id;
@@ -59,11 +67,11 @@ public class Identity {
         this.gender = gender;
     }
 
-    public LocalDate getBirthday() {
+    public String getBirthday() {
         return birthday;
     }
 
-    public void setBirthday(LocalDate birthday) {
+    public void setBirthday(String birthday) {
         this.birthday = birthday;
     }
 }
