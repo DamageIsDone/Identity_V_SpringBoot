@@ -3,11 +3,11 @@ package com.example.mysite.classes;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "Distinction")
-public class Distinction {
+@Table(name = "Skill")
+public class Skill {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer distinction_id;
+    private Integer skill_id;
 
     @Column(nullable = false, length = 100)
     private String name;
@@ -44,11 +44,11 @@ public class Distinction {
         this.name = name;
     }
 
-    public Integer getDistinction_id() {
-        return distinction_id;
+    public Integer getSkill_id() {
+        return skill_id;
     }
 
-    public void setDistinction_id(Integer distinction_id) {
-        this.distinction_id = distinction_id;
+    public void setSkill_id(Integer skill_id) {
+        this.skill_id = skill_id;
     }
 }

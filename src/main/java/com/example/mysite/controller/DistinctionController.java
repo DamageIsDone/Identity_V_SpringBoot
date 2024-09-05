@@ -22,8 +22,8 @@ public class DistinctionController {
 
     @PostMapping
     public Distinction createDistinction(@RequestBody Distinction distinction) {
-        String sql = "INSERT INTO Distinction (name, description) VALUES (?, ?)";
-        jdbcTemplate.update(sql, distinction.getName(), distinction.getDescription());
+        String sql = "INSERT INTO Distinction (name, description, picture) VALUES (?, ?, ?)";
+        jdbcTemplate.update(sql, distinction.getName(), distinction.getDescription(), distinction.getPicture());
         return distinction;
     }
 }

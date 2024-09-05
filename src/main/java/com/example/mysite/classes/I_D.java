@@ -3,6 +3,7 @@ package com.example.mysite.classes;
 import jakarta.persistence.*;
 
 @Entity
+@Table(name = "I_D")
 public class I_D {
     @EmbeddedId
     private I_DKey I_DKey;
@@ -48,7 +49,7 @@ public class I_D {
         private Integer identity_id;
         private Integer distinction_id;
 
-        // Getters, setters, equals, and hashCode methods
+        // Getters and setters
 
         public Integer getDistinction_id() {
             return distinction_id;
