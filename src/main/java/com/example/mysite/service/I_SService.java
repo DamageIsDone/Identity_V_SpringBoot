@@ -1,7 +1,6 @@
 package com.example.mysite.service;
 
 import com.example.mysite.classes.I_S;
-import com.example.mysite.repository.I_DRepository;
 import com.example.mysite.repository.I_SRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
