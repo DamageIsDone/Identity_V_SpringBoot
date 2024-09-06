@@ -34,12 +34,12 @@ public class I_H {
         this.identity = identity;
     }
 
-    public I_HKey getI_HKey() {
+    public I_HKey getI_hKey() {
         return I_HKey;
     }
 
-    public void setI_HKey(I_HKey i_HKey) {
-        I_HKey = i_HKey;
+    public void setI_hKey(I_HKey I_HKey) {
+        this.I_HKey = I_HKey;
     }
 
     @Embeddable

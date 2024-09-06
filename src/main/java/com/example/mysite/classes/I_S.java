@@ -36,12 +36,12 @@ public class I_S {
         this.identity = identity;
     }
 
-    public I_SKey getI_SKey() {
+    public I_SKey getI_sKey() {
         return I_SKey;
     }
 
-    public void setI_SKey(I_SKey i_SKey) {
-        I_SKey = i_SKey;
+    public void setI_sKey(I_SKey I_SKey) {
+        this.I_SKey = I_SKey;
     }
 
     @Embeddable
