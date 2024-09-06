@@ -29,22 +29,28 @@ public class IdentityController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Identity> getIdentityById(@PathVariable Integer id) {
-        Optional<Identity> identity = identityService.findById(id);
-        return identity.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        String sql = "SELECT * FROM identity WHERE identity_id = ?";
+        List<Identity> identities = jdbcTemplate.query(sql, new Object[]{id}, new BeanPropertyRowMapper<>(Identity.class));
+        return identities.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(identities.get(0));
     }
 
     @PostMapping
     public Identity createIdentity(@RequestBody Identity identity) {
-        return identityService.save(identity);
+        String sql = "INSERT INTO Identity (career, name, camp, gender, birthday, picture) VALUES (?, ?, ?, ?, ?, ?)";
+        jdbcTemplate.update(sql, identity.getCareer(), identity.getName(), identity.getGender(), identity.getBirthday(),identity.getPicture());
+        return identity;
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Identity> updateIdentity(@PathVariable Integer id, @RequestBody Identity identity) {
-        if (!identityService.findById(id).isPresent()) {
+        String sqlCheck = "SELECT COUNT(*) FROM identity WHERE identity_id = ?";
+        int count = jdbcTemplate.queryForObject(sqlCheck, new Object[]{id}, Integer.class);
+        if (count == 0) {
             return ResponseEntity.notFound().build();
         }
-        identity.setIdentity_id(id);
-        return ResponseEntity.ok(identityService.save(identity));
+        String sqlUpdate = "UPDATE identity SET career = ?, name = ?, camp = ?, gender = ?, birthday = ?, picture = ? WHERE identity_id = ?";
+        jdbcTemplate.update(sqlUpdate, identity.getCareer(), identity.getName(), identity.getGender(), identity.getBirthday(),identity.getPicture(), id);
+        return ResponseEntity.ok(identity);
     }
 
     @DeleteMapping("/{id}")
