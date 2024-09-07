@@ -37,7 +37,7 @@ public class IdentityController {
     @PostMapping
     public Identity createIdentity(@RequestBody Identity identity) {
         String sql = "INSERT INTO Identity (career, name, camp, gender, birthday, picture) VALUES (?, ?, ?, ?, ?, ?)";
-        jdbcTemplate.update(sql, identity.getCareer(), identity.getName(), identity.getGender(), identity.getBirthday(),identity.getPicture());
+        jdbcTemplate.update(sql, identity.getCareer(), identity.getName(), identity.getCamp(), identity.getGender(), identity.getBirthday(), identity.getPicture());
         return identity;
     }
 
