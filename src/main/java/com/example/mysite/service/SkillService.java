@@ -7,10 +7,11 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class SkillService {
+    @Autowired
     private SkillRepository skillRepository;
 
-    @Autowired
-    public SkillService(SkillRepository skillRepository) {
-        this.skillRepository = skillRepository;
+    public Skill getSkillById(Integer id) {
+        return skillRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Skill not found with id: " + id));
     }
 }

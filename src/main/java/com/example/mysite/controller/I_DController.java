@@ -59,7 +59,6 @@ public class I_DController {
         return i_dService.saveID(i_d);
     }
 
-
     @DeleteMapping("/{identityId}/{distinctionId}")
     public void deleteID(@PathVariable Integer identityId, @PathVariable Integer distinctionId) {
         I_D.I_DKey i_dKey = new I_D.I_DKey();

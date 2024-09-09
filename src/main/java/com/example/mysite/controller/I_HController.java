@@ -1,7 +1,9 @@
 package com.example.mysite.controller;
 
-import com.example.mysite.classes.I_H;
+import com.example.mysite.classes.*;
+import com.example.mysite.service.HandheldService;
 import com.example.mysite.service.I_HService;
+import com.example.mysite.service.IdentityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,6 +14,12 @@ import java.util.List;
 public class I_HController {
     @Autowired
     private I_HService i_hService;
+
+    @Autowired
+    private IdentityService identityService;
+
+    @Autowired
+    private HandheldService handheldService;
 
     @GetMapping
     public List<I_H> getAllIHs() {
@@ -28,6 +36,24 @@ public class I_HController {
 
     @PostMapping
     public I_H createIH(@RequestBody I_H i_h) {
+        return i_hService.saveIH(i_h);
+    }
+
+    @PostMapping("/create")
+    public I_H createIHByIds(@RequestParam Integer identity_id, @RequestParam Integer handheld_id) {
+        I_H.I_HKey i_hKey = new I_H.I_HKey();
+        i_hKey.setIdentity_id(identity_id);
+        i_hKey.setHandheld_id(handheld_id);
+
+        I_H i_h = new I_H();
+        i_h.setI_hKey(i_hKey);
+
+        Identity identity = identityService.getIdentityById(identity_id);
+        Handheld handheld = handheldService.getHandheldById(handheld_id);
+
+        i_h.setIdentity(identity);
+        i_h.setHandheld(handheld);
+
         return i_hService.saveIH(i_h);
     }
 
