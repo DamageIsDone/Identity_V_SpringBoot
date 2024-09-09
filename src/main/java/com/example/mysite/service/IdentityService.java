@@ -33,4 +33,9 @@ public class IdentityService {
     public long countAllIdentities() {
         return identityRepository.count();
     }
+
+    public Identity getIdentityById(Integer id) {
+        return identityRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Identity not found with id: " + id));
+    }
 }

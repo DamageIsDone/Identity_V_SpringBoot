@@ -6,13 +6,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class DistinctionService {
+    @Autowired
     private DistinctionRepository distinctionRepository;
 
-    @Autowired
-    public DistinctionService(DistinctionRepository distinctionRepository) {
-        this.distinctionRepository = distinctionRepository;
+    public Optional<Distinction> findById(Integer id) {
+        return distinctionRepository.findById(id);
+    }
+
+    public Distinction getDistinctionById(Integer id) {
+        return distinctionRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Distinction not found with id: " + id));
     }
 }
