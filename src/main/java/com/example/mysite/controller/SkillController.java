@@ -26,4 +26,18 @@ public class SkillController {
         jdbcTemplate.update(sql, skill.getName(), skill.getDescription(), skill.getPicture());
         return skill;
     }
+
+    @DeleteMapping("/delete")
+    public Skill deleteSkill(@RequestParam Integer skill_id) {
+        String selectSql = "SELECT * FROM Skill WHERE skill_id = ?";
+        Skill skill = jdbcTemplate.queryForObject(selectSql, new BeanPropertyRowMapper<>(Skill.class), skill_id);
+
+        if (skill != null) {
+            String deleteSql = "DELETE FROM Skill WHERE skill_id = ?";
+            jdbcTemplate.update(deleteSql, skill_id);
+        }
+
+        return skill;
+    }
+
 }

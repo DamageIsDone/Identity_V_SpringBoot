@@ -26,4 +26,17 @@ public class DistinctionController {
         jdbcTemplate.update(sql, distinction.getName(), distinction.getDescription(), distinction.getPicture());
         return distinction;
     }
+
+    @DeleteMapping("/delete")
+    public Distinction deleteDistinction(@RequestParam Integer distinction_id) {
+        String selectSql = "SELECT * FROM Distinction WHERE distinction_id = ?";
+        Distinction distinction = jdbcTemplate.queryForObject(selectSql, new BeanPropertyRowMapper<>(Distinction.class), distinction_id);
+
+        if (distinction != null) {
+            String deleteSql = "DELETE FROM Distinction WHERE distinction_id = ?";
+            jdbcTemplate.update(deleteSql, distinction_id);
+        }
+
+        return  distinction;
+    }
 }

@@ -5,6 +5,8 @@ import com.example.mysite.service.I_SService;
 import com.example.mysite.service.IdentityService;
 import com.example.mysite.service.SkillService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,6 +22,9 @@ public class I_SController {
 
     @Autowired
     private SkillService skillService;
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
     @GetMapping
     public List<I_S> getAllISs() {
@@ -63,5 +68,18 @@ public class I_SController {
         i_sKey.setIdentity_id(identityId);
         i_sKey.setSkill_id(skillId);
         i_sService.deleteIS(i_sKey);
+    }
+
+    @DeleteMapping("/delete")
+    public I_S deleteIS(@RequestParam Integer skill_id) {
+        String selectSql = "SELECT * FROM I_S WHERE skill_id = ?";
+        I_S i_s = jdbcTemplate.queryForObject(selectSql, new BeanPropertyRowMapper<>(I_S.class), skill_id);
+
+        if (i_s != null) {
+            String deleteSql = "DELETE FROM I_S WHERE skill_id = ?";
+            jdbcTemplate.update(deleteSql, skill_id);
+        }
+
+        return i_s;
     }
 }

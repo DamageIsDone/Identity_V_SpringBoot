@@ -26,4 +26,18 @@ public class HandheldController {
         jdbcTemplate.update(sql, handheld.getName(), handheld.getDescription(), handheld.getPicture());
         return handheld;
     }
+
+    @DeleteMapping("/delete")
+    public Handheld deleteHandheld(@RequestParam Integer handheld_id) {
+        String selectSql = "SELECT * FROM Handheld WHERE handheld_id = ?";
+        Handheld handheld = jdbcTemplate.queryForObject(selectSql, new BeanPropertyRowMapper<>(Handheld.class), handheld_id);
+
+        if (handheld != null) {
+            String deleteSql = "DELETE FROM Handheld WHERE handheld_id = ?";
+            jdbcTemplate.update(deleteSql, handheld_id);
+        }
+
+        return handheld;
+    }
+
 }

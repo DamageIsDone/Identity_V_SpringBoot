@@ -5,6 +5,8 @@ import com.example.mysite.service.HandheldService;
 import com.example.mysite.service.I_HService;
 import com.example.mysite.service.IdentityService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,6 +22,9 @@ public class I_HController {
 
     @Autowired
     private HandheldService handheldService;
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
     @GetMapping
     public List<I_H> getAllIHs() {
@@ -64,4 +69,18 @@ public class I_HController {
         i_hKey.setHandheld_id(handheldId);
         i_hService.deleteIH(i_hKey);
     }
+
+    @DeleteMapping("/delete")
+    public I_H deleteIH(@RequestParam Integer handheld_id) {
+        String selectSql = "SELECT * FROM I_H WHERE handheld_id = ?";
+        I_H i_h = jdbcTemplate.queryForObject(selectSql, new BeanPropertyRowMapper<>(I_H.class), handheld_id);
+
+        if (i_h != null) {
+            String deleteSql = "DELETE FROM I_H WHERE handheld_id = ?";
+            jdbcTemplate.update(deleteSql, handheld_id);
+        }
+
+        return i_h;
+    }
+
 }

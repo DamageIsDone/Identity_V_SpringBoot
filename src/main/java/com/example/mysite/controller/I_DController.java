@@ -7,6 +7,8 @@ import com.example.mysite.service.DistinctionService;
 import com.example.mysite.service.I_DService;
 import com.example.mysite.service.IdentityService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,6 +24,9 @@ public class I_DController {
 
     @Autowired
     private DistinctionService distinctionService;
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
     @GetMapping
     public List<I_D> getAllIDs() {
@@ -65,5 +70,18 @@ public class I_DController {
         i_dKey.setIdentity_id(identityId);
         i_dKey.setDistinction_id(distinctionId);
         i_dService.deleteID(i_dKey);
+    }
+
+    @DeleteMapping("/delete")
+    public I_D deleteID(@RequestParam Integer distinction_id) {
+        String selectSql = "SELECT * FROM I_D WHERE distinction_id = ?";
+        I_D i_d = jdbcTemplate.queryForObject(selectSql, new BeanPropertyRowMapper<>(I_D.class), distinction_id);
+
+        if (i_d != null) {
+            String deleteSql = "DELETE FROM I_D WHERE distinction_id = ?";
+            jdbcTemplate.update(deleteSql, distinction_id);
+        }
+
+        return i_d;
     }
 }
