@@ -46,9 +46,11 @@ public class HandheldController {
                 "( SELECT handheld_id FROM I_H WHERE identity_id = ? )";
         List<Handheld> handhelds = jdbcTemplate.query(selectSql, new BeanPropertyRowMapper<>(Handheld.class), identity_id);
 
+        jdbcTemplate.update("SET foreign_key_checks = 0");
         String sql = "DELETE FROM Handheld WHERE handheld_id IN " +
                 "( SELECT handheld_id FROM I_H WHERE identity_id = ? )";
         jdbcTemplate.update(sql, identity_id);
+        jdbcTemplate.update("SET foreign_key_checks = 1");
 
         return handhelds;
     }

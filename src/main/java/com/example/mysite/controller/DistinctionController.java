@@ -47,9 +47,11 @@ public class DistinctionController {
                 "( SELECT distinction_id FROM I_D WHERE identity_id = ? )";
         List<Distinction> distinctions = jdbcTemplate.query(selectSql, new BeanPropertyRowMapper<>(Distinction.class), identity_id);
 
+        jdbcTemplate.update("SET foreign_key_checks = 0");
         String sql = "DELETE FROM Distinction WHERE distinction_id IN " +
                 "( SELECT distinction_id FROM I_D WHERE identity_id = ? )";
         jdbcTemplate.update(sql, identity_id);
+        jdbcTemplate.update("SET foreign_key_checks = 1");
 
         return distinctions;
     }

@@ -47,9 +47,11 @@ public class SkillController {
                 "( SELECT skill_id FROM I_S WHERE identity_id = ? )";
         List<Skill> skills = jdbcTemplate.query(selectSql, new BeanPropertyRowMapper<>(Skill.class), identity_id);
 
+        jdbcTemplate.update("SET foreign_key_checks = 0");
         String sql = "DELETE FROM Skill WHERE skill_id IN " +
                 "( SELECT skill_id FROM I_S WHERE identity_id = ? )";
         jdbcTemplate.update(sql, identity_id);
+        jdbcTemplate.update("SET foreign_key_checks = 1");
 
         return skills;
     }
