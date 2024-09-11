@@ -40,4 +40,17 @@ public class HandheldController {
         return handheld;
     }
 
+    @DeleteMapping("/delete/i")
+    public List<Handheld> deleteHandhelds(@RequestParam Integer identity_id) {
+        String selectSql = "SELECT * FROM Handheld WHERE handheld_id IN " +
+                "( SELECT handheld_id FROM I_H WHERE identity_id = ? )";
+        List<Handheld> handhelds = jdbcTemplate.query(selectSql, new BeanPropertyRowMapper<>(Handheld.class), identity_id);
+
+        String sql = "DELETE FROM Handheld WHERE handheld_id IN " +
+                "( SELECT handheld_id FROM I_H WHERE identity_id = ? )";
+        jdbcTemplate.update(sql, identity_id);
+
+        return handhelds;
+    }
+
 }

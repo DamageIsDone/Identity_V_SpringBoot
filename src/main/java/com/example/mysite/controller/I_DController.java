@@ -2,6 +2,7 @@ package com.example.mysite.controller;
 
 import com.example.mysite.classes.Distinction;
 import com.example.mysite.classes.I_D;
+import com.example.mysite.classes.I_H;
 import com.example.mysite.classes.Identity;
 import com.example.mysite.service.DistinctionService;
 import com.example.mysite.service.I_DService;
@@ -73,7 +74,7 @@ public class I_DController {
     }
 
     @DeleteMapping("/delete")
-    public I_D deleteID(@RequestParam Integer distinction_id) {
+    public I_D deleteIDByD(@RequestParam Integer distinction_id) {
         String selectSql = "SELECT * FROM I_D WHERE distinction_id = ?";
         I_D i_d = jdbcTemplate.queryForObject(selectSql, new BeanPropertyRowMapper<>(I_D.class), distinction_id);
 
@@ -83,5 +84,18 @@ public class I_DController {
         }
 
         return i_d;
+    }
+
+    @DeleteMapping("/delete/i")
+    public List<I_D> deleteIDByI(@RequestParam Integer identity_id) {
+        String selectSql = "SELECT * FROM I_D WHERE identity_id = ?";
+        List<I_D> i_ds = jdbcTemplate.query(selectSql, new BeanPropertyRowMapper<>(I_D.class), identity_id);
+
+        if (i_ds != null) {
+            String deleteSql = "DELETE FROM I_D WHERE identity_id = ?";
+            jdbcTemplate.update(deleteSql, identity_id);
+        }
+
+        return i_ds;
     }
 }

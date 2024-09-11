@@ -1,6 +1,7 @@
 package com.example.mysite.controller;
 
 import com.example.mysite.classes.Distinction;
+import com.example.mysite.classes.Handheld;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -38,5 +39,18 @@ public class DistinctionController {
         }
 
         return  distinction;
+    }
+
+    @DeleteMapping("/delete/i")
+    public List<Distinction> deleteDistinctions(@RequestParam Integer identity_id) {
+        String selectSql = "SELECT * FROM Distinction WHERE distinction_id IN " +
+                "( SELECT distinction_id FROM I_D WHERE identity_id = ? )";
+        List<Distinction> distinctions = jdbcTemplate.query(selectSql, new BeanPropertyRowMapper<>(Distinction.class), identity_id);
+
+        String sql = "DELETE FROM Distinction WHERE distinction_id IN " +
+                "( SELECT distinction_id FROM I_D WHERE identity_id = ? )";
+        jdbcTemplate.update(sql, identity_id);
+
+        return distinctions;
     }
 }

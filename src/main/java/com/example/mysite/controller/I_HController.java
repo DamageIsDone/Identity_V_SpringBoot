@@ -71,7 +71,7 @@ public class I_HController {
     }
 
     @DeleteMapping("/delete")
-    public I_H deleteIH(@RequestParam Integer handheld_id) {
+    public I_H deleteIHByH(@RequestParam Integer handheld_id) {
         String selectSql = "SELECT * FROM I_H WHERE handheld_id = ?";
         I_H i_h = jdbcTemplate.queryForObject(selectSql, new BeanPropertyRowMapper<>(I_H.class), handheld_id);
 
@@ -81,6 +81,19 @@ public class I_HController {
         }
 
         return i_h;
+    }
+
+    @DeleteMapping("/delete/i")
+    public List<I_H> deleteIHByI(@RequestParam Integer identity_id) {
+        String selectSql = "SELECT * FROM I_H WHERE identity_id = ?";
+        List<I_H> i_hs = jdbcTemplate.query(selectSql, new BeanPropertyRowMapper<>(I_H.class), identity_id);
+
+        if (i_hs != null) {
+            String deleteSql = "DELETE FROM I_H WHERE identity_id = ?";
+            jdbcTemplate.update(deleteSql, identity_id);
+        }
+
+        return i_hs;
     }
 
 }

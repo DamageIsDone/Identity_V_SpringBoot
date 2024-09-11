@@ -9,7 +9,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/identities")
@@ -53,13 +52,17 @@ public class IdentityController {
         return ResponseEntity.ok(identity);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteIdentity(@PathVariable Integer id) {
-        if (!identityService.findById(id).isPresent()) {
-            return ResponseEntity.notFound().build();
+    @DeleteMapping("/{identity_id}")
+    public Identity deleteIdentity(@PathVariable Integer identity_id) {
+        String selectSql = "SELECT * FROM Identity WHERE identity_id = ?";
+        Identity identity = jdbcTemplate.queryForObject(selectSql, new BeanPropertyRowMapper<>(Identity.class), identity_id);
+
+        if (identity != null) {
+            String deleteSql = "DELETE FROM Identity WHERE identity_id = ?";
+            jdbcTemplate.update(deleteSql, identity_id);
         }
-        identityService.deleteById(id);
-        return ResponseEntity.noContent().build();
+
+        return identity;
     }
 
     @GetMapping("/count")

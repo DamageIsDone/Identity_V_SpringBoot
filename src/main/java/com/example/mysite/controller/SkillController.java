@@ -1,5 +1,6 @@
 package com.example.mysite.controller;
 
+import com.example.mysite.classes.Handheld;
 import com.example.mysite.classes.Skill;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -38,6 +39,19 @@ public class SkillController {
         }
 
         return skill;
+    }
+
+    @DeleteMapping("/delete/i")
+    public List<Skill> deleteSkills(@RequestParam Integer identity_id) {
+        String selectSql = "SELECT * FROM Skill WHERE skill_id IN " +
+                "( SELECT skill_id FROM I_S WHERE identity_id = ? )";
+        List<Skill> skills = jdbcTemplate.query(selectSql, new BeanPropertyRowMapper<>(Skill.class), identity_id);
+
+        String sql = "DELETE FROM Skill WHERE skill_id IN " +
+                "( SELECT skill_id FROM I_S WHERE identity_id = ? )";
+        jdbcTemplate.update(sql, identity_id);
+
+        return skills;
     }
 
 }
