@@ -48,7 +48,7 @@ public class IdentityController {
             return ResponseEntity.notFound().build();
         }
         String sqlUpdate = "UPDATE identity SET career = ?, name = ?, camp = ?, gender = ?, birthday = ?, picture = ? WHERE identity_id = ?";
-        jdbcTemplate.update(sqlUpdate, identity.getCareer(), identity.getName(), identity.getGender(), identity.getBirthday(),identity.getPicture(), id);
+        jdbcTemplate.update(sqlUpdate, identity.getCareer(), identity.getName(), identity.getCamp(), identity.getGender(), identity.getBirthday(), identity.getPicture(), id);
         return ResponseEntity.ok(identity);
     }
 

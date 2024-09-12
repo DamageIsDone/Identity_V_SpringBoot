@@ -1,7 +1,9 @@
 package com.example.mysite.controller;
 
+import com.example.mysite.classes.Distinction;
 import com.example.mysite.classes.Handheld;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
@@ -25,6 +27,18 @@ public class HandheldController {
         String sql = "INSERT INTO Handheld (name, description, picture) VALUES (?, ?, ?)";
         jdbcTemplate.update(sql, handheld.getName(), handheld.getDescription(), handheld.getPicture());
         return handheld;
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Handheld> updateHandheld(@PathVariable Integer id, @RequestBody Handheld handheld) {
+        String sqlCheck = "SELECT COUNT(*) FROM handheld WHERE handheld_id = ?";
+        int count = jdbcTemplate.queryForObject(sqlCheck, new Object[]{id}, Integer.class);
+        if (count == 0) {
+            return ResponseEntity.notFound().build();
+        }
+        String sqlUpdate = "UPDATE handheld SET name = ?, description = ?, picture = ? WHERE handheld_id = ?";
+        jdbcTemplate.update(sqlUpdate, handheld.getName(), handheld.getDescription(), handheld.getPicture(), id);
+        return ResponseEntity.ok(handheld);
     }
 
     @DeleteMapping("/delete")

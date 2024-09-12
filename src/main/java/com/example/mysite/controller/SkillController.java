@@ -1,7 +1,9 @@
 package com.example.mysite.controller;
 
+import com.example.mysite.classes.Distinction;
 import com.example.mysite.classes.Skill;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
@@ -25,6 +27,18 @@ public class SkillController {
         String sql = "INSERT INTO Skill (name, description, picture) VALUES (?, ?, ?)";
         jdbcTemplate.update(sql, skill.getName(), skill.getDescription(), skill.getPicture());
         return skill;
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Skill> updateSkill(@PathVariable Integer id, @RequestBody Skill skill) {
+        String sqlCheck = "SELECT COUNT(*) FROM skill WHERE skill_id = ?";
+        int count = jdbcTemplate.queryForObject(sqlCheck, new Object[]{id}, Integer.class);
+        if (count == 0) {
+            return ResponseEntity.notFound().build();
+        }
+        String sqlUpdate = "UPDATE skill SET name = ?, description = ?, picture = ? WHERE skill_id = ?";
+        jdbcTemplate.update(sqlUpdate, skill.getName(), skill.getDescription(), skill.getPicture(), id);
+        return ResponseEntity.ok(skill);
     }
 
     @DeleteMapping("/delete")

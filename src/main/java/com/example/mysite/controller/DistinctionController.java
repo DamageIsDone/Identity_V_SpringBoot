@@ -1,8 +1,9 @@
 package com.example.mysite.controller;
 
 import com.example.mysite.classes.Distinction;
-import com.example.mysite.classes.Handheld;
+import com.example.mysite.classes.Identity;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +27,18 @@ public class DistinctionController {
         String sql = "INSERT INTO Distinction (name, description, picture) VALUES (?, ?, ?)";
         jdbcTemplate.update(sql, distinction.getName(), distinction.getDescription(), distinction.getPicture());
         return distinction;
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Distinction> updateDistinction(@PathVariable Integer id, @RequestBody Distinction distinction) {
+        String sqlCheck = "SELECT COUNT(*) FROM distinction WHERE distinction_id = ?";
+        int count = jdbcTemplate.queryForObject(sqlCheck, new Object[]{id}, Integer.class);
+        if (count == 0) {
+            return ResponseEntity.notFound().build();
+        }
+        String sqlUpdate = "UPDATE distinction SET name = ?, description = ?, picture = ? WHERE distinction_id = ?";
+        jdbcTemplate.update(sqlUpdate, distinction.getName(), distinction.getDescription(), distinction.getPicture(), id);
+        return ResponseEntity.ok(distinction);
     }
 
     @DeleteMapping("/delete")
