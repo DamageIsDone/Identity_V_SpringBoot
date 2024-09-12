@@ -1,6 +1,5 @@
 package com.example.mysite.controller;
 
-import com.example.mysite.classes.Handheld;
 import com.example.mysite.classes.Skill;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
