@@ -1,6 +1,7 @@
 package com.example.mysite.service;
 
 import com.example.mysite.classes.U_I_T;
+import com.example.mysite.classes.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.example.mysite.repository.U_I_TRepository;
@@ -28,5 +29,9 @@ public class U_I_TService {
 
     public List<U_I_T> getAllUITs() {
         return u_i_tRepository.findAll();
+    }
+
+    public List<U_I_T> getUITByU(Integer user_id) {
+        return u_i_tRepository.findByUser_id(user_id);
     }
 }
