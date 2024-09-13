@@ -25,7 +25,7 @@ public class UserController {
     public User createUser(@RequestBody User user) {
         String sql = "INSERT INTO users (username, password, phone, security_question, security_answer, isManager) VALUES (?, ?, ?, ?, ?, false)";
         jdbcTemplate.update(sql, user.getUsername(), user.getPassword(), user.getPhone(), user.getSecurity_question(), user.getSecurity_answer());
-        return user; // Return the created user object
+        return user;
     }
 
     @GetMapping
