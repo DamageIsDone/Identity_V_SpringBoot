@@ -1,7 +1,6 @@
 package com.example.mysite.repository;
 
 import com.example.mysite.classes.U_I_T;
-import com.example.mysite.classes.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 

@@ -1,9 +1,7 @@
 package com.example.mysite.controller;
 
 import com.example.mysite.classes.U_I_T;
-import com.example.mysite.classes.User;
 import com.example.mysite.service.U_I_TService;
-import com.example.mysite.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
