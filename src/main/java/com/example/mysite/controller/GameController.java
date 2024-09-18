@@ -2,6 +2,7 @@ package com.example.mysite.controller;
 
 import com.example.mysite.classes.Game;
 import com.example.mysite.service.GameService;
+import com.example.mysite.classes.Identity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -49,6 +50,54 @@ public class GameController {
         }
 
         return game;
+    }
+
+    @PutMapping("/update")
+    public Identity updateIdentity(
+            @RequestParam int game_id,
+            @RequestParam int old_identity_id,
+            @RequestParam int new_identity_id) {
+
+        // 查询旧身份
+        String sqlFetchOldIdentity = "SELECT * FROM U_I_T WHERE identity_id = ? AND id IN (" +
+                "SELECT hunter_id FROM Game WHERE game_id = ? " +
+                "UNION " +
+                "SELECT survivor1_id FROM Game WHERE game_id = ? " +
+                "UNION " +
+                "SELECT survivor2_id FROM Game WHERE game_id = ? " +
+                "UNION " +
+                "SELECT survivor3_id FROM Game WHERE game_id = ? " +
+                "UNION " +
+                "SELECT survivor4_id FROM Game WHERE game_id = ?)";
+
+        Identity oldIdentity = jdbcTemplate.queryForObject(sqlFetchOldIdentity, new Object[]{old_identity_id, game_id, game_id, game_id, game_id, game_id}, new BeanPropertyRowMapper<>(Identity.class));
+
+        if (oldIdentity == null) {
+            return null; // 处理可以根据你的需求调整
+        }
+
+        // 使用临时表进行更新
+        String sqlUpdate = "UPDATE U_I_T SET identity_id = ? WHERE id IN ( " +
+                "SELECT id FROM ( " +
+                "SELECT hunter_id AS id FROM Game WHERE game_id = ? AND hunter_id IN (SELECT id FROM U_I_T WHERE identity_id = ?) " +
+                "UNION " +
+                "SELECT survivor1_id FROM Game WHERE game_id = ? AND survivor1_id IN (SELECT id FROM U_I_T WHERE identity_id = ?) " +
+                "UNION " +
+                "SELECT survivor2_id FROM Game WHERE game_id = ? AND survivor2_id IN (SELECT id FROM U_I_T WHERE identity_id = ?) " +
+                "UNION " +
+                "SELECT survivor3_id FROM Game WHERE game_id = ? AND survivor3_id IN (SELECT id FROM U_I_T WHERE identity_id = ?) " +
+                "UNION " +
+                "SELECT survivor4_id FROM Game WHERE game_id = ? AND survivor4_id IN (SELECT id FROM U_I_T WHERE identity_id = ?) " +
+                ") AS tempTable)";
+
+        jdbcTemplate.update(sqlUpdate, new_identity_id,
+                game_id, old_identity_id,
+                game_id, old_identity_id,
+                game_id, old_identity_id,
+                game_id, old_identity_id,
+                game_id, old_identity_id);
+
+        return oldIdentity;
     }
 
 }
