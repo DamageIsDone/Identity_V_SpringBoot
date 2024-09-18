@@ -29,4 +29,15 @@ public class GameController {
     public List<Game> getGameByU(@RequestParam("user_id") Integer user_id) {
         return gameService.getGameByUser(user_id);
     }
+
+    @GetMapping("/result")
+    public int getResult(@RequestParam("game_id") Integer game_id) {
+        String sql = "SELECT (CASE WHEN result1 = TRUE THEN 1 ELSE 0 END + " +
+                "CASE WHEN result2 = TRUE THEN 1 ELSE 0 END + " +
+                "CASE WHEN result3 = TRUE THEN 1 ELSE 0 END + " +
+                "CASE WHEN result4 = TRUE THEN 1 ELSE 0 END) AS true_count " +
+                "FROM Game WHERE game_id = ?";
+        return jdbcTemplate.queryForObject(sql, new Object[]{game_id}, Integer.class);
+    }
+
 }
