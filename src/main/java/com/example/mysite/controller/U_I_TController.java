@@ -3,6 +3,7 @@ package com.example.mysite.controller;
 import com.example.mysite.classes.U_I_T;
 import com.example.mysite.service.U_I_TService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
@@ -49,6 +50,22 @@ public class U_I_TController {
         } else {
             return null; // or handle the case where no records were found
         }
+    }
+
+    @PostMapping
+    public ResponseEntity<Integer> createUIT(
+            @RequestParam("user_id")Integer user_id,
+            @RequestParam("identity_id")Integer identity_id,
+            @RequestParam("talent1_id")Integer talent1_id,
+            @RequestParam("talent2_id")Integer talent2_id) {
+        String sql = "INSERT INTO U_I_T (user_id, identity_id, talent1_id, talent2_id) VALUES (?, ?, ?, ?)";
+        jdbcTemplate.update(sql, user_id, identity_id,
+                talent1_id, talent2_id);
+
+        // 获取新创建的 ID
+        Integer newId = jdbcTemplate.queryForObject("SELECT LAST_INSERT_ID()", Integer.class);
+
+        return ResponseEntity.status(201).body(newId);
     }
 
 }

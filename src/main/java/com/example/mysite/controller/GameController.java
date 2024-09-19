@@ -6,6 +6,7 @@ import com.example.mysite.classes.U_I_T;
 import com.example.mysite.service.GameService;
 import com.example.mysite.classes.Identity;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
@@ -100,6 +101,35 @@ public class GameController {
                 game_id, old_identity_id);
 
         return oldIdentity;
+    }
+
+    @PostMapping
+    public ResponseEntity<Integer> createGame(
+            @RequestParam("hunter_id")Integer hunter_id,
+            @RequestParam("survivor1_id")Integer survivor1_id,
+            @RequestParam("survivor2_id")Integer survivor2_id,
+            @RequestParam("survivor3_id")Integer survivor3_id,
+            @RequestParam("survivor4_id")Integer survivor4_id
+    ) {
+        String sql = "INSERT INTO Game (hunter_id, survivor1_id, survivor2_id, survivor3_id, survivor4_id, result1, result2, result3, result4) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+        jdbcTemplate.update(sql,
+                hunter_id,
+                survivor1_id,
+                survivor2_id,
+                survivor3_id,
+                survivor4_id,
+                false,
+                false,
+                false,
+                false
+        );
+
+        // 获取新创建的 ID
+        Integer newId = jdbcTemplate.queryForObject("SELECT LAST_INSERT_ID()", Integer.class);
+
+        return ResponseEntity.status(201).body(newId);
     }
 
 }
