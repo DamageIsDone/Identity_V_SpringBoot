@@ -1,6 +1,8 @@
 package com.example.mysite.controller;
 
 import com.example.mysite.classes.Game;
+import com.example.mysite.classes.Talent;
+import com.example.mysite.classes.U_I_T;
 import com.example.mysite.service.GameService;
 import com.example.mysite.classes.Identity;
 import org.springframework.beans.factory.annotation.Autowired;

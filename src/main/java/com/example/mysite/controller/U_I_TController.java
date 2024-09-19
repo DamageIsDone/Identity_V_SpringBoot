@@ -3,6 +3,7 @@ package com.example.mysite.controller;
 import com.example.mysite.classes.U_I_T;
 import com.example.mysite.service.U_I_TService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,4 +27,28 @@ public class U_I_TController {
     public List<U_I_T> getUITByU(@RequestParam("user_id") Integer user_id) {
         return u_i_tService.getUITByU(user_id);
     }
+
+    @PutMapping("/update")
+    public U_I_T updateUIT(@RequestParam("id") Integer id, @RequestParam("old_talent_id") Integer old_talent_id, @RequestParam("new_talent_id") Integer new_talent_id) {
+        String selectSql1 = "SELECT * FROM U_I_T WHERE id = ? AND talent1_id = ?";
+        List<U_I_T> results1 = jdbcTemplate.query(selectSql1, new BeanPropertyRowMapper<>(U_I_T.class), id, old_talent_id);
+
+        String selectSql2 = "SELECT * FROM U_I_T WHERE id = ? AND talent2_id = ?";
+        List<U_I_T> results2 = jdbcTemplate.query(selectSql2, new BeanPropertyRowMapper<>(U_I_T.class), id, old_talent_id);
+
+        if (!results1.isEmpty()) {
+            U_I_T u_i_t1 = results1.get(0);
+            String updateSql1 = "UPDATE U_I_T SET talent1_id = ? WHERE id = ? AND talent1_id = ?";
+            jdbcTemplate.update(updateSql1, new_talent_id, id, old_talent_id);
+            return u_i_t1;
+        } else if (!results2.isEmpty()) {
+            U_I_T u_i_t2 = results2.get(0);
+            String updateSql2 = "UPDATE U_I_T SET talent2_id = ? WHERE id = ? AND talent2_id = ?";
+            jdbcTemplate.update(updateSql2, new_talent_id, id, old_talent_id);
+            return u_i_t2;
+        } else {
+            return null; // or handle the case where no records were found
+        }
+    }
+
 }
