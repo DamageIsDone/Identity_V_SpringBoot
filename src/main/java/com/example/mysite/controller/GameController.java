@@ -103,6 +103,19 @@ public class GameController {
         return oldIdentity;
     }
 
+    @PutMapping("/update/result")
+    public void updateResult(@RequestParam("game_id")Integer game_id, @RequestParam("result")boolean result, @RequestParam("index")Integer index) {
+        String selectSql = "SELECT * FROM Game WHERE game_id = ?";
+        List<Game> games = jdbcTemplate.query(selectSql, new BeanPropertyRowMapper<>(Game.class), game_id);
+
+        if (games.isEmpty()) {
+            return;
+        }
+
+        String sql = "UPDATE Game SET result" + index + " = ? WHERE game_id = ?";
+        jdbcTemplate.update(sql, result, game_id);
+    }
+
     @PostMapping
     public ResponseEntity<Integer> createGame(
             @RequestParam("hunter_id")Integer hunter_id,
