@@ -1,10 +1,7 @@
 package com.example.mysite.controller;
 
-import com.example.mysite.classes.Game;
-import com.example.mysite.classes.Talent;
-import com.example.mysite.classes.U_I_T;
+import com.example.mysite.classes.*;
 import com.example.mysite.service.GameService;
-import com.example.mysite.classes.Identity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -40,6 +37,51 @@ public class GameController {
                 "CASE WHEN result4 = TRUE THEN 1 ELSE 0 END) AS true_count " +
                 "FROM Game WHERE game_id = ?";
         return jdbcTemplate.queryForObject(sql, new Object[]{game_id}, Integer.class);
+    }
+
+    @GetMapping("/user/{userId}/most-used-hunter")
+    public Identity getMostUsedHunter(@PathVariable Long userId) {
+        String sql = "SELECT i.* " +
+                "FROM Game g JOIN U_I_T uit ON g.hunter_id = uit.id " +
+                "JOIN Identity i ON i.identity_id = uit.identity_id " +
+                "WHERE uit.user_id = ? " +
+                "GROUP BY i.identity_id " +
+                "ORDER BY COUNT(*) DESC LIMIT 1";
+
+        return jdbcTemplate.queryForObject(sql, new Object[]{userId}, (rs, rowNum) -> {
+            Identity identity = new Identity();
+            identity.setIdentity_id(rs.getInt("identity_id"));
+            identity.setCareer(rs.getString("career"));
+            identity.setName(rs.getString("name"));
+            identity.setCamp(rs.getString("camp"));
+            identity.setGender(rs.getString("gender"));
+            identity.setBirthday(rs.getString("birthday"));
+            identity.setPicture(rs.getString("picture"));
+            return identity;
+        });
+    }
+
+    @GetMapping("/user/{userId}/most-used-survivor")
+    public Identity getMostUsedSurvivor(@PathVariable Long userId) {
+        String sql = "SELECT i.* " +
+                "FROM Game g JOIN U_I_T uit ON " +
+                "(g.survivor1_id = uit.id OR g.survivor2_id = uit.id) " +
+                "JOIN Identity i ON i.identity_id = uit.identity_id " +
+                "WHERE uit.user_id = ? " +
+                "GROUP BY i.identity_id " +
+                "ORDER BY COUNT(*) DESC LIMIT 1";
+
+        return jdbcTemplate.queryForObject(sql, new Object[]{userId}, (rs, rowNum) -> {
+            Identity identity = new Identity();
+            identity.setIdentity_id(rs.getInt("identity_id"));
+            identity.setCareer(rs.getString("career"));
+            identity.setName(rs.getString("name"));
+            identity.setCamp(rs.getString("camp"));
+            identity.setGender(rs.getString("gender"));
+            identity.setBirthday(rs.getString("birthday"));
+            identity.setPicture(rs.getString("picture"));
+            return identity;
+        });
     }
 
     @DeleteMapping("/delete")
