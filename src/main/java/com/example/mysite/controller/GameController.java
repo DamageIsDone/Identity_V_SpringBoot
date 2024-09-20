@@ -122,7 +122,11 @@ public class GameController {
             @RequestParam("survivor1_id")Integer survivor1_id,
             @RequestParam("survivor2_id")Integer survivor2_id,
             @RequestParam("survivor3_id")Integer survivor3_id,
-            @RequestParam("survivor4_id")Integer survivor4_id
+            @RequestParam("survivor4_id")Integer survivor4_id,
+            @RequestParam("result1")boolean result1,
+            @RequestParam("result2")boolean result2,
+            @RequestParam("result3")boolean result3,
+            @RequestParam("result4")boolean result4
     ) {
         String sql = "INSERT INTO Game (hunter_id, survivor1_id, survivor2_id, survivor3_id, survivor4_id, result1, result2, result3, result4) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -133,10 +137,10 @@ public class GameController {
                 survivor2_id,
                 survivor3_id,
                 survivor4_id,
-                false,
-                false,
-                false,
-                false
+                result1,
+                result2,
+                result3,
+                result4
         );
 
         // 获取新创建的 ID
