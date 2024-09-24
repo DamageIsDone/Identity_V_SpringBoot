@@ -1,7 +1,9 @@
 package com.example.mysite.controller;
 
+import com.example.mysite.classes.Identity;
 import com.example.mysite.classes.Talent;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
@@ -23,12 +25,21 @@ public class TalentController {
                 new BeanPropertyRowMapper<>(Talent.class));
     }
 
-    // Create a new Talent
+    @GetMapping("/search")
+    public ResponseEntity<Talent> getTalentByName(@RequestParam("name")String name) {
+        String sql = "SELECT * FROM Talent WHERE name = ?";
+        List<Talent> talents = jdbcTemplate.query(sql, new Object[]{name},
+                new BeanPropertyRowMapper<>(Talent.class));
+        return talents.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(talents.get(0));
+    }
+
     @PostMapping
     public Talent createTalent(@RequestBody Talent talent) {
-        String sql = "INSERT INTO Talent (name, description, effect, camp, picture) VALUES (?, ?, ?, ?, ?)";
-        jdbcTemplate.update(sql, talent.getName(), talent.getDescription(), talent.getEffect(), talent.getCamp(), talent.getPicture());
-        return talent; // Return the created Talent object
+        String sql = "INSERT INTO Talent (name, description, effect, camp, picture) " +
+                "VALUES (?, ?, ?, ?, ?)";
+        jdbcTemplate.update(sql, talent.getName(), talent.getDescription(),
+                talent.getEffect(), talent.getCamp(), talent.getPicture());
+        return talent;
     }
 
     // Get all Talents

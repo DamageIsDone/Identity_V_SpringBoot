@@ -28,15 +28,26 @@ public class IdentityController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Identity> getIdentityById(@PathVariable Integer id) {
-        String sql = "SELECT * FROM identity WHERE identity_id = ?";
-        List<Identity> identities = jdbcTemplate.query(sql, new Object[]{id}, new BeanPropertyRowMapper<>(Identity.class));
+        String sql = "SELECT * FROM Identity WHERE identity_id = ?";
+        List<Identity> identities = jdbcTemplate.query(sql, new Object[]{id},
+                new BeanPropertyRowMapper<>(Identity.class));
+        return identities.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(identities.get(0));
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<Identity> getIdentityByCareerOrName(@RequestParam("str")String str) {
+        String sql = "SELECT * FROM Identity WHERE career = ? OR name = ?";
+        List<Identity> identities = jdbcTemplate.query(sql, new Object[]{str},
+                new BeanPropertyRowMapper<>(Identity.class));
         return identities.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(identities.get(0));
     }
 
     @PostMapping
     public Identity createIdentity(@RequestBody Identity identity) {
-        String sql = "INSERT INTO Identity (career, name, camp, gender, birthday, picture) VALUES (?, ?, ?, ?, ?, ?)";
-        jdbcTemplate.update(sql, identity.getCareer(), identity.getName(), identity.getCamp(), identity.getGender(), identity.getBirthday(), identity.getPicture());
+        String sql = "INSERT INTO Identity (career, name, camp, gender, birthday, picture) " +
+                "VALUES (?, ?, ?, ?, ?, ?)";
+        jdbcTemplate.update(sql, identity.getCareer(), identity.getName(), identity.getCamp(),
+                identity.getGender(), identity.getBirthday(), identity.getPicture());
         return identity;
     }
 

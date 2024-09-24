@@ -2,7 +2,6 @@ package com.example.mysite.controller;
 
 import com.example.mysite.classes.User;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
@@ -24,10 +23,10 @@ public class UserController {
 
     @GetMapping("/recover")
     public User recoverPassword(
-            @RequestParam("user_id")Integer user_id,
+            @RequestParam("phone")String phone,
             @RequestParam("security_answer")String security_answer) {
-        String sql = "SELECT * FROM users WHERE user_id = ? AND security_answer = ?";
-        return jdbcTemplate.queryForObject(sql, new Object[]{user_id, security_answer},
+        String sql = "SELECT * FROM users WHERE phone = ? AND security_answer = ?";
+        return jdbcTemplate.queryForObject(sql, new Object[]{phone, security_answer},
                 new BeanPropertyRowMapper<>(User.class));
     }
 

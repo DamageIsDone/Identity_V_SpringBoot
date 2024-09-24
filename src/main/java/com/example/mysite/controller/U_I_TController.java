@@ -1,5 +1,7 @@
 package com.example.mysite.controller;
 
+import com.example.mysite.classes.Distinction;
+import com.example.mysite.classes.Talent;
 import com.example.mysite.classes.U_I_T;
 import com.example.mysite.service.U_I_TService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +10,7 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -29,8 +32,25 @@ public class U_I_TController {
         return u_i_tService.getUITByU(user_id);
     }
 
+    @GetMapping("/view_talent")
+    public List<Talent> getTalent(@RequestParam("id")Integer id) {
+        String sql1 = "SELECT * FROM Talent WHERE talent_id = " +
+                "( SELECT talent1_id FROM U_I_T WHERE id = ? ) ";
+        List<Talent> talents1 = jdbcTemplate.query(sql1, new BeanPropertyRowMapper<>(Talent.class), id);
+
+        String sql2 = "SELECT * FROM Talent WHERE talent_id = " +
+                "( SELECT talent2_id FROM U_I_T WHERE id = ? ) ";
+        List<Talent> talents2 = jdbcTemplate.query(sql2, new BeanPropertyRowMapper<>(Talent.class), id);
+
+        talents1.addAll(talents2);
+        return talents1;
+    }
+
     @PutMapping("/update")
-    public U_I_T updateUIT(@RequestParam("id") Integer id, @RequestParam("old_talent_id") Integer old_talent_id, @RequestParam("new_talent_id") Integer new_talent_id) {
+    public U_I_T updateUIT(
+            @RequestParam("id") Integer id,
+            @RequestParam("old_talent_id") Integer old_talent_id,
+            @RequestParam("new_talent_id") Integer new_talent_id) {
         String selectSql1 = "SELECT * FROM U_I_T WHERE id = ? AND talent1_id = ?";
         List<U_I_T> results1 = jdbcTemplate.query(selectSql1, new BeanPropertyRowMapper<>(U_I_T.class), id, old_talent_id);
 
@@ -48,7 +68,7 @@ public class U_I_TController {
             jdbcTemplate.update(updateSql2, new_talent_id, id, old_talent_id);
             return u_i_t2;
         } else {
-            return null; // or handle the case where no records were found
+            return null;
         }
     }
 

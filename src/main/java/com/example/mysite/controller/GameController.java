@@ -21,7 +21,8 @@ public class GameController {
 
     @GetMapping
     public List<Game> getAllGames() {
-        return gameService.getAllGames();
+        String sql = "SELECT * FROM Game";
+        return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(Game.class));
     }
 
     @GetMapping("/user")
@@ -90,8 +91,21 @@ public class GameController {
         Game game = jdbcTemplate.queryForObject(selectSql, new BeanPropertyRowMapper<>(Game.class), game_id);
 
         if (game != null) {
+            jdbcTemplate.update("SET foreign_key_checks = 0");
+            String sql0 = "DELETE FROM U_I_T WHERE id IN ( SELECT hunter_id FROM Game WHERE game_id = ? )";
+            String sql1 = "DELETE FROM U_I_T WHERE id IN ( SELECT survivor1_id FROM Game WHERE game_id = ? )";
+            String sql2 = "DELETE FROM U_I_T WHERE id IN ( SELECT survivor2_id FROM Game WHERE game_id = ? )";
+            String sql3 = "DELETE FROM U_I_T WHERE id IN ( SELECT survivor3_id FROM Game WHERE game_id = ? )";
+            String sql4 = "DELETE FROM U_I_T WHERE id IN ( SELECT survivor4_id FROM Game WHERE game_id = ? )";
+            jdbcTemplate.update(sql0, game_id);
+            jdbcTemplate.update(sql1, game_id);
+            jdbcTemplate.update(sql2, game_id);
+            jdbcTemplate.update(sql3, game_id);
+            jdbcTemplate.update(sql4, game_id);
+
             String sql = "DELETE FROM Game WHERE game_id = ?";
             jdbcTemplate.update(sql, game_id);
+            jdbcTemplate.update("SET foreign_key_checks = 1");
         }
 
         return game;
@@ -115,7 +129,9 @@ public class GameController {
                 "UNION " +
                 "SELECT survivor4_id FROM Game WHERE game_id = ?)";
 
-        Identity oldIdentity = jdbcTemplate.queryForObject(sqlFetchOldIdentity, new Object[]{old_identity_id, game_id, game_id, game_id, game_id, game_id}, new BeanPropertyRowMapper<>(Identity.class));
+        Identity oldIdentity = jdbcTemplate.queryForObject(sqlFetchOldIdentity,
+                new Object[]{old_identity_id, game_id, game_id, game_id, game_id, game_id},
+                new BeanPropertyRowMapper<>(Identity.class));
 
         if (oldIdentity == null) {
             return null; // 处理可以根据你的需求调整
@@ -124,15 +140,20 @@ public class GameController {
         // 使用临时表进行更新
         String sqlUpdate = "UPDATE U_I_T SET identity_id = ? WHERE id IN ( " +
                 "SELECT id FROM ( " +
-                "SELECT hunter_id AS id FROM Game WHERE game_id = ? AND hunter_id IN (SELECT id FROM U_I_T WHERE identity_id = ?) " +
+                "SELECT hunter_id AS id FROM Game WHERE game_id = ? AND hunter_id IN " +
+                "(SELECT id FROM U_I_T WHERE identity_id = ?) " +
                 "UNION " +
-                "SELECT survivor1_id FROM Game WHERE game_id = ? AND survivor1_id IN (SELECT id FROM U_I_T WHERE identity_id = ?) " +
+                "SELECT survivor1_id FROM Game WHERE game_id = ? AND survivor1_id IN " +
+                "(SELECT id FROM U_I_T WHERE identity_id = ?) " +
                 "UNION " +
-                "SELECT survivor2_id FROM Game WHERE game_id = ? AND survivor2_id IN (SELECT id FROM U_I_T WHERE identity_id = ?) " +
+                "SELECT survivor2_id FROM Game WHERE game_id = ? AND survivor2_id IN " +
+                "(SELECT id FROM U_I_T WHERE identity_id = ?) " +
                 "UNION " +
-                "SELECT survivor3_id FROM Game WHERE game_id = ? AND survivor3_id IN (SELECT id FROM U_I_T WHERE identity_id = ?) " +
+                "SELECT survivor3_id FROM Game WHERE game_id = ? AND survivor3_id IN " +
+                "(SELECT id FROM U_I_T WHERE identity_id = ?) " +
                 "UNION " +
-                "SELECT survivor4_id FROM Game WHERE game_id = ? AND survivor4_id IN (SELECT id FROM U_I_T WHERE identity_id = ?) " +
+                "SELECT survivor4_id FROM Game WHERE game_id = ? AND survivor4_id IN " +
+                "(SELECT id FROM U_I_T WHERE identity_id = ?) " +
                 ") AS tempTable)";
 
         jdbcTemplate.update(sqlUpdate, new_identity_id,
@@ -146,7 +167,10 @@ public class GameController {
     }
 
     @PutMapping("/update/result")
-    public void updateResult(@RequestParam("game_id")Integer game_id, @RequestParam("result")boolean result, @RequestParam("index")Integer index) {
+    public void updateResult(
+            @RequestParam("game_id")Integer game_id,
+            @RequestParam("result")boolean result,
+            @RequestParam("index")Integer index) {
         String selectSql = "SELECT * FROM Game WHERE game_id = ?";
         List<Game> games = jdbcTemplate.query(selectSql, new BeanPropertyRowMapper<>(Game.class), game_id);
 
@@ -170,19 +194,13 @@ public class GameController {
             @RequestParam("result3")boolean result3,
             @RequestParam("result4")boolean result4
     ) {
-        String sql = "INSERT INTO Game (hunter_id, survivor1_id, survivor2_id, survivor3_id, survivor4_id, result1, result2, result3, result4) " +
+        String sql = "INSERT INTO Game (hunter_id, survivor1_id, survivor2_id, survivor3_id, survivor4_id, " +
+                "result1, result2, result3, result4) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         jdbcTemplate.update(sql,
-                hunter_id,
-                survivor1_id,
-                survivor2_id,
-                survivor3_id,
-                survivor4_id,
-                result1,
-                result2,
-                result3,
-                result4
+                hunter_id, survivor1_id, survivor2_id, survivor3_id, survivor4_id,
+                result1, result2, result3, result4
         );
 
         // 获取新创建的 ID

@@ -36,19 +36,22 @@ public class DistinctionController {
         if (count == 0) {
             return ResponseEntity.notFound().build();
         }
-        String sqlUpdate = "UPDATE distinction SET name = ?, description = ?, picture = ? WHERE distinction_id = ?";
-        jdbcTemplate.update(sqlUpdate, distinction.getName(), distinction.getDescription(), distinction.getPicture(), id);
+        String sqlUpdate1 = "UPDATE distinction SET name = ?, description = ?, picture = ? WHERE distinction_id = ?";
+        jdbcTemplate.update(sqlUpdate1, distinction.getName(), distinction.getDescription(), distinction.getPicture(), id);
         return ResponseEntity.ok(distinction);
     }
 
     @DeleteMapping("/delete")
     public Distinction deleteDistinction(@RequestParam Integer distinction_id) {
         String selectSql = "SELECT * FROM Distinction WHERE distinction_id = ?";
-        Distinction distinction = jdbcTemplate.queryForObject(selectSql, new BeanPropertyRowMapper<>(Distinction.class), distinction_id);
+        Distinction distinction = jdbcTemplate.queryForObject(selectSql,
+                new BeanPropertyRowMapper<>(Distinction.class), distinction_id);
 
         if (distinction != null) {
-            String deleteSql = "DELETE FROM Distinction WHERE distinction_id = ?";
-            jdbcTemplate.update(deleteSql, distinction_id);
+            String deleteSql1 = "DELETE FROM Distinction WHERE distinction_id = ?";
+            jdbcTemplate.update(deleteSql1, distinction_id);
+            String deleteSql2 = "DELETE FROM I_D WHERE distinction_id = ?";
+            jdbcTemplate.update(deleteSql2, distinction_id);
         }
 
         return  distinction;
@@ -58,12 +61,15 @@ public class DistinctionController {
     public List<Distinction> deleteDistinctions(@RequestParam Integer identity_id) {
         String selectSql = "SELECT * FROM Distinction WHERE distinction_id IN " +
                 "( SELECT distinction_id FROM I_D WHERE identity_id = ? )";
-        List<Distinction> distinctions = jdbcTemplate.query(selectSql, new BeanPropertyRowMapper<>(Distinction.class), identity_id);
+        List<Distinction> distinctions = jdbcTemplate.query(selectSql,
+                new BeanPropertyRowMapper<>(Distinction.class), identity_id);
 
         jdbcTemplate.update("SET foreign_key_checks = 0");
-        String sql = "DELETE FROM Distinction WHERE distinction_id IN " +
+        String sql1 = "DELETE FROM Distinction WHERE distinction_id IN " +
                 "( SELECT distinction_id FROM I_D WHERE identity_id = ? )";
-        jdbcTemplate.update(sql, identity_id);
+        jdbcTemplate.update(sql1, identity_id);
+        String sql2 = "DELETE FROM I_D WHERE identity_id = ?";
+        jdbcTemplate.update(sql2, identity_id);
         jdbcTemplate.update("SET foreign_key_checks = 1");
 
         return distinctions;
