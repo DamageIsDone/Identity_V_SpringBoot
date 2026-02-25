@@ -124,4 +124,45 @@ public class WechatService {
         userInfo.put("nickname", nickname != null ? nickname : username);
         return userInfo;
     }
+    // 获取签到状态
+    public Map<String, Object> getSignStatus(String openid) {
+        Map<String, Object> result = new HashMap<>();
+
+        // 查询累计签到天数
+        String countSql = "SELECT COUNT(DISTINCT sign_date) FROM sign_log WHERE openid = ?";
+        Integer totalDays = jdbcTemplate.queryForObject(countSql, Integer.class, openid);
+        result.put("totalDays", totalDays == null ? 0 : totalDays);
+
+        // 查询今日是否已签
+        String todaySql = "SELECT COUNT(*) FROM sign_log WHERE openid = ? AND sign_date = CURDATE()";
+        Integer signedTodayCount = jdbcTemplate.queryForObject(todaySql, Integer.class, openid);
+        boolean signedToday = signedTodayCount != null && signedTodayCount > 0;
+        result.put("signedToday", signedToday);
+
+        return result;
+    }
+
+    // 执行签到
+    @Transactional
+    public Map<String, Object> sign(String openid) {
+        // 检查今日是否已签到
+        String checkSql = "SELECT COUNT(*) FROM sign_log WHERE openid = ? AND sign_date = CURDATE()";
+        Integer count = jdbcTemplate.queryForObject(checkSql, Integer.class, openid);
+        if (count != null && count > 0) {
+            throw new RuntimeException("今日已签到，请勿重复签到");
+        }
+
+        // 插入签到记录
+        String insertSql = "INSERT INTO sign_log (openid, sign_date) VALUES (?, CURDATE())";
+        jdbcTemplate.update(insertSql, openid);
+
+        // 查询新的累计天数
+        String totalSql = "SELECT COUNT(DISTINCT sign_date) FROM sign_log WHERE openid = ?";
+        Integer totalDays = jdbcTemplate.queryForObject(totalSql, Integer.class, openid);
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("totalDays", totalDays == null ? 0 : totalDays);
+        result.put("signedToday", true); // 刚签完，肯定是 true
+        return result;
+    }
 }
