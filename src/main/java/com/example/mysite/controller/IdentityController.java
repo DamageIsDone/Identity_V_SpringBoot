@@ -37,7 +37,7 @@ public class IdentityController {
     @GetMapping("/search")
     public ResponseEntity<Identity> getIdentityByCareerOrName(@RequestParam("str")String str) {
         String sql = "SELECT * FROM Identity WHERE career = ? OR name = ?";
-        List<Identity> identities = jdbcTemplate.query(sql, new Object[]{str},
+        List<Identity> identities = jdbcTemplate.query(sql, new Object[]{str, str}, // 这里加第二个str
                 new BeanPropertyRowMapper<>(Identity.class));
         return identities.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(identities.get(0));
     }
