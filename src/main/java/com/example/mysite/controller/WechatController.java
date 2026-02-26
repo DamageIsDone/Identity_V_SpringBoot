@@ -77,4 +77,26 @@ public class WechatController {
             return error(e.getMessage());
         }
     }
+    // 获取签到状态（累计天数和今日是否已签）
+    @GetMapping("/sign/status")
+    public Map<String, Object> getSignStatus(@RequestParam String openid) {
+        try {
+            Map<String, Object> data = wechatService.getSignStatus(openid);
+            return success(data);
+        } catch (Exception e) {
+            return error(e.getMessage());
+        }
+    }
+
+    // 执行签到
+    @PostMapping("/sign")
+    public Map<String, Object> sign(@RequestBody Map<String, String> request) {
+        try {
+            String openid = request.get("openid");
+            Map<String, Object> data = wechatService.sign(openid);
+            return success(data);
+        } catch (Exception e) {
+            return error(e.getMessage());
+        }
+    }
 }
